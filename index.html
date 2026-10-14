@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Little Turtle and the River's Song</title>
+    <!-- Include jQuery and Turn.js from CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/turn.js/3/turn.min.js"></script>
+    <style>
+        body {
+            background-color: #1a1a2e;
+            color: #fff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+        h1 {
+            font-size: 1.3rem;
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+            color: #e0e0e0;
+            text-align: center;
+            padding: 0 10px;
+        }
+        #flipbook {
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+        }
+        #flipbook .page {
+            background-color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+        #flipbook .page img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+        .instructions {
+            margin-top: 12px;
+            font-size: 0.85rem;
+            color: #a0a0a0;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Little Turtle and the River's Song</h1>
+    
+    <div id="flipbook">
+        <div class="page"><img src="1.png" alt="Page 1"></div>
+        <div class="page"><img src="2.png" alt="Page 2"></div>
+        <div class="page"><img src="3.png" alt="Page 3"></div>
+        <div class="page"><img src="4.png" alt="Page 4"></div>
+        <div class="page"><img src="5.png" alt="Page 5"></div>
+        <div class="page"><img src="6.png" alt="Page 6"></div>
+        <div class="page"><img src="7.png" alt="Page 7"></div>
+        <div class="page"><img src="8.png" alt="Page 8"></div>
+        <div class="page"><img src="9.png" alt="Page 9"></div>
+        <div class="page"><img src="10.png" alt="Page 10"></div>
+        <div class="page"><img src="11.png" alt="Page 11"></div>
+        <div class="page"><img src="12.png" alt="Page 12"></div>
+        <div class="page"><img src="13.png" alt="Page 13"></div>
+        <div class="page"><img src="14.png" alt="Page 14"></div>
+        <div class="page"><img src="15.png" alt="Page 15"></div>
+        <div class="page"><img src="16.png" alt="Page 16"></div>
+        <div class="page"><img src="17.png" alt="Page 17"></div>
+    </div>
+
+    <div class="instructions">Use arrow keys, swipe, or click and drag corners to flip pages.</div>
+
+    <script>
+        // Function to calculate responsive dimensions for 1:1 square pages
+        function getBookDimensions() {
+            var width = window.innerWidth;
+            if (width < 768) {
+                // Mobile View: Single page square (1:1)
+                return {
+                    width: Math.min(width - 30, 450),
+                    height: Math.min(width - 30, 450),
+                    display: 'single'
+                };
+            } else if (width < 1024) {
+                // Tablet View: Smaller double spread (2:1 ratio)
+                return {
+                    width: 800,
+                    height: 400,
+                    display: 'double'
+                };
+            } else {
+                // PC / Desktop View: Full size double spread (2:1 ratio)
+                return {
+                    width: 1000,
+                    height: 500,
+                    display: 'double'
+                };
+            }
+        }
+
+        $(document).ready(function() {
+            var dims = getBookDimensions();
+
+            $("#flipbook").turn({
+                width: dims.width,
+                height: dims.height,
+                autoCenter: true,
+                elevation: 50,
+                gradients: true,
+                display: dims.display
+            });
+        });
+
+        // Automatically re-adjust if user rotates phone or resizes browser
+        window.addEventListener('resize', function() {
+            var dims = getBookDimensions();
+            $("#flipbook").turn('size', dims.width, dims.height);
+        });
+
+        // Enable keyboard arrow navigation
+        $(document).keydown(function(e){
+            if(e.keyCode == 37) {
+                $("#flipbook").turn('previous');
+            } else if(e.keyCode == 39) {
+                $("#flipbook").turn('next');
+            }
+        });
+
+        // Enable mobile touch swiping
+        var touchStartX = 0;
+        var touchEndX = 0;
+
+        document.getElementById('flipbook').addEventListener('touchstart', function(e) {
+            touchStartX = e.changedTouches[0].screenX;
+        }, false);
+
+        document.getElementById('flipbook').addEventListener('touchend', function(e) {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        }, false);
+
+        function handleSwipe() {
+            if (touchEndX < touchStartX - 50) {
+                $("#flipbook").turn('next'); // Swipe Left -> Next Page
+            }
+            if (touchEndX > touchStartX + 50) {
+                $("#flipbook").turn('previous'); // Swipe Right -> Previous Page
+            }
+        }
+    </script>
+
+</body>
+</html>
